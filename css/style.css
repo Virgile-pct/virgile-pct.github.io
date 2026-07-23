@@ -1,14 +1,21 @@
 /* ==========================================================================
    PORTFOLIO — DA BRUTALISTE / VIOLET NOIR BLANC / POINTILLÉS (inspi Nothing)
+   Concept : « l'instrument s'allume ». Tout mouvement est cranté (steps),
+   jamais fluide — le site se comporte comme un appareil, pas comme une page.
+   Progressive enhancement : les états cachés/animés n'existent que sous
+   html.js ; sans JavaScript, tout est visible et statique.
    ========================================================================== */
 
 :root {
   --black: #0a0a0a;
   --black-2: #111111;
+  --black-3: #161616;
   --white: #f4f2ef;
   --grey: #8a8a8a;
+  --grey-dark: #3a3a3a;
   --violet: #7b5cff;
   --violet-dim: #4a3a99;
+  --violet-glow: rgba(123, 92, 255, 0.25);
 
   --border: 1px solid var(--white);
   --border-dotted: 1px dotted var(--grey);
@@ -17,6 +24,10 @@
   --font-dot: "Doto", "Space Mono", monospace;
 
   --gutter: clamp(16px, 4vw, 48px);
+
+  /* Mouvement : crans mécaniques, deux vitesses. */
+  --step-fast: 0.18s steps(4);
+  --step-slow: 0.45s steps(7);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -45,7 +56,15 @@ code {
 
 .doto { font-family: var(--font-dot); font-weight: 900; }
 
-/* ==== DOT OVERLAY (trame de points sur tout l'écran) ==================== */
+/* Focus clavier : visible, brutaliste, jamais supprimé. */
+:focus { outline: none; }
+:focus-visible { outline: 2px dotted var(--violet); outline-offset: 4px; }
+
+/* Le curseur custom ne s'active que si JS l'a décidé (pointeur fin). */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+
+/* ==== COUCHES D'AMBIANCE ================================================ */
+/* Trame de points au-dessus de tout : la signature. */
 .dot-overlay {
   position: fixed;
   inset: 0;
@@ -54,6 +73,83 @@ code {
   background-image: radial-gradient(rgba(244, 242, 239, 0.05) 1px, transparent 1px);
   background-size: 22px 22px;
   mix-blend-mode: screen;
+}
+
+/* Grain photographique très léger : casse les aplats noirs. */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 998;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Balayage CRT : une bande lumineuse descend l'écran, à peine visible. */
+.scanline {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -10%;
+  height: 12vh;
+  pointer-events: none;
+  z-index: 997;
+  background: linear-gradient(to bottom, transparent, rgba(244, 242, 239, 0.028), transparent);
+}
+html.js .scanline { animation: scan 9s steps(60) infinite; }
+
+@keyframes scan {
+  to { transform: translateY(1050%); }
+}
+
+/* ==== CURSEUR CUSTOM ==================================================== */
+/* Un point qui devient un viseur carré pointillé sur l'interactif. */
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  pointer-events: none;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--violet);
+  mix-blend-mode: difference;
+  transition: width var(--step-fast), height var(--step-fast),
+              margin var(--step-fast), border-radius var(--step-fast),
+              background var(--step-fast);
+  display: none;
+}
+html.has-cursor .cursor { display: block; }
+
+.cursor.is-locked {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 0;
+  background: transparent;
+  border: 2px dotted var(--violet);
+}
+
+.cursor.is-down { transform: scale(0.7); }
+
+/* ==== BARRE DE PROGRESSION DE LECTURE =================================== */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 300;
+  pointer-events: none;
+}
+.scroll-progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background-image: repeating-linear-gradient(90deg,
+    var(--violet) 0 6px, transparent 6px 10px);
 }
 
 /* ==== NAV =============================================================== */
@@ -67,6 +163,12 @@ code {
   padding: 14px var(--gutter);
   background: var(--black);
   border-bottom: var(--border);
+}
+html.js .nav { animation: nav-drop 0.5s steps(7) both; }
+
+@keyframes nav-drop {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0); }
 }
 
 .nav__logo {
@@ -86,6 +188,9 @@ code {
   display: inline-block;
 }
 .dot--violet { background: var(--violet); }
+html.js .nav__logo .dot { animation: blink 2.8s steps(2) infinite; }
+html.js .nav__logo .dot:nth-child(2) { animation-delay: 0.9s; }
+html.js .nav__logo .dot:nth-child(3) { animation-delay: 1.8s; }
 
 .nav__links { display: flex; gap: clamp(16px, 3vw, 40px); }
 
@@ -105,7 +210,8 @@ code {
   border-bottom: 2px dotted var(--violet);
   transition: right 0.25s steps(6);
 }
-.nav__links a:hover::after { right: 0; }
+.nav__links a:hover::after,
+.nav__links a:focus-visible::after { right: 0; }
 
 .nav__burger { display: none; }
 
@@ -132,20 +238,59 @@ code {
   padding-bottom: 12px;
 }
 
+/* Ligne de boot : le JS y tape sa séquence, le curseur _ clignote. */
+.hero__boot::after {
+  content: "_";
+  color: var(--violet);
+  animation: blink 1s steps(2) infinite;
+}
+html.no-js .hero__boot::after { content: none; }
+
+.hero__status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-square {
+  width: 8px;
+  height: 8px;
+  background: var(--violet);
+}
+html.js .status-square { animation: blink 1.4s steps(2) infinite; }
+
 .hero__title {
   display: flex;
   flex-direction: column;
-  line-height: 0.95;
+  line-height: 0.92;
   margin: auto 0;
   padding: 40px 0;
 }
 
+/* Masque de reveal : chaque ligne monte depuis sous sa ligne de coupe. */
+.hero__line-mask { display: block; overflow: hidden; }
+
 .hero__line {
-  font-size: clamp(48px, 12vw, 160px);
-  letter-spacing: 0.02em;
+  display: block;
+  font-size: clamp(52px, 13.5vw, 190px);
+  letter-spacing: 0.01em;
   text-transform: uppercase;
+  /* Ombre dure décalée : la profondeur brutaliste, sans flou. */
+  text-shadow: 5px 5px 0 var(--violet-glow);
 }
-.hero__line--violet { color: var(--violet); }
+html.js .hero__line { animation: rise 0.7s steps(9) both; }
+html.js .hero__line-mask:nth-child(2) .hero__line { animation-delay: 0.12s; }
+
+.hero__line--violet {
+  color: var(--violet);
+  text-shadow: 5px 5px 0 rgba(244, 242, 239, 0.12);
+}
+
+@keyframes rise {
+  from { transform: translateY(110%); }
+  to   { transform: translateY(0); }
+}
 
 .hero__sub {
   display: grid;
@@ -153,6 +298,13 @@ code {
   gap: var(--gutter);
   border-top: var(--border-dotted);
   padding-top: 20px;
+}
+html.js .hero__tag  { animation: appear 0.4s steps(4) 0.55s both; }
+html.js .hero__desc { animation: appear 0.4s steps(4) 0.7s both; }
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .hero__tag {
@@ -176,13 +328,14 @@ code {
   color: var(--grey);
   writing-mode: vertical-rl;
 }
+html.js .hero__scroll { animation: appear 0.4s steps(4) 0.9s both; }
 .hero__scroll .doto {
   writing-mode: horizontal-tb;
   color: var(--violet);
-  animation: blink 1.4s steps(2) infinite;
 }
-.hero__scroll .doto:nth-child(2) { animation-delay: 0.2s; }
-.hero__scroll .doto:nth-child(3) { animation-delay: 0.4s; }
+html.js .hero__scroll .doto { animation: blink 1.4s steps(2) infinite; }
+html.js .hero__scroll .doto:nth-child(2) { animation-delay: 0.2s; }
+html.js .hero__scroll .doto:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes blink { 50% { opacity: 0.15; } }
 
@@ -204,9 +357,23 @@ code {
   padding: 10px 0;
   letter-spacing: 0.1em;
 }
+.marquee:hover .marquee__inner { animation-play-state: paused; }
 
 @keyframes marquee {
   to { transform: translateX(-33.333%); }
+}
+
+/* ==== RÉVÉLATION AU SCROLL ============================================== */
+/* .reveal est neutre sans JS ; sous html.js, caché puis révélé en crans. */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity var(--step-slow), transform var(--step-slow);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+html.js .reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ==== SECTIONS ========================================================== */
@@ -249,30 +416,38 @@ code {
 
 @media (max-width: 720px) {
   .projects-grid { grid-template-columns: 1fr; }
-  .project-card--placeholder { display: none; }
+  /* Le display:none du placeholder vit dans le bloc responsive final :
+     placé ici, il perdrait la cascade contre .project-card { display:flex }
+     défini plus bas (même spécificité, ordre du fichier décisif). */
 }
 
 .project-card {
+  position: relative;
   border-right: var(--border);
   border-bottom: var(--border);
   padding: 24px;
-  min-height: 260px;
+  min-height: 280px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   cursor: pointer;
   background: var(--black);
-  transition: background 0.15s steps(3);
+  transition: background var(--step-fast), color var(--step-fast),
+              transform var(--step-fast), box-shadow var(--step-fast);
   text-align: left;
   color: inherit;
   font-family: inherit;
   font-size: inherit;
 }
 
-.project-card:hover {
-  background: var(--black-2);
-  background-image: radial-gradient(rgba(123, 92, 255, 0.25) 1px, transparent 1px);
-  background-size: 14px 14px;
+/* Survol : inversion totale + décrochage physique. La carte « sort ». */
+.project-card:not(.project-card--placeholder):hover,
+.project-card:not(.project-card--placeholder):focus-visible {
+  background: var(--white);
+  color: var(--black);
+  transform: translate(-4px, -4px);
+  box-shadow: 6px 6px 0 var(--violet);
+  z-index: 2;
 }
 
 .project-card__top {
@@ -286,7 +461,7 @@ code {
   padding-bottom: 10px;
 }
 
-.project-card__num { color: var(--violet); font-family: var(--font-dot); font-weight: 700; }
+.project-card__num { color: var(--violet); font-family: var(--font-dot); font-weight: 700; font-size: 15px; }
 
 .project-card__title {
   font-family: var(--font-dot);
@@ -297,6 +472,7 @@ code {
 }
 
 .project-card__desc { color: var(--grey); font-size: 13px; flex: 1; }
+.project-card:not(.project-card--placeholder):hover .project-card__desc { color: var(--grey-dark); }
 
 .project-card__tags {
   display: flex;
@@ -309,8 +485,11 @@ code {
   letter-spacing: 0.1em;
   border: var(--border-dotted);
   padding: 3px 8px;
-  color: var(--white);
+  color: inherit;
   text-transform: uppercase;
+}
+.project-card:not(.project-card--placeholder):hover .project-card__tags span {
+  border-color: var(--black);
 }
 
 .project-card__open {
@@ -318,11 +497,20 @@ code {
   color: var(--violet);
   font-size: 12px;
   letter-spacing: 0.2em;
+  transition: letter-spacing var(--step-fast);
+}
+.project-card:not(.project-card--placeholder):hover .project-card__open {
+  letter-spacing: 0.35em;
 }
 
 .project-card--placeholder { cursor: default; }
-.project-card--placeholder .project-card__title { color: var(--grey); }
-.project-card--placeholder:hover { background: var(--black); }
+.project-card--placeholder .project-card__title { color: var(--grey-dark); }
+.project-card--placeholder .project-card__desc { color: var(--grey-dark); }
+.project-card--placeholder .project-card__tags span { color: var(--grey-dark); border-color: var(--grey-dark); }
+.project-card--placeholder {
+  background-image: radial-gradient(rgba(244, 242, 239, 0.045) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
 
 .projects-empty {
   color: var(--grey);
@@ -358,6 +546,7 @@ code {
   color: var(--grey);
   letter-spacing: 0.2em;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .about__lead {
@@ -380,11 +569,13 @@ code {
 .about__facts li {
   display: flex;
   gap: 12px;
-  padding: 10px 0;
+  padding: 10px 0 10px 0;
   border-bottom: var(--border-dotted);
   font-size: 13px;
   letter-spacing: 0.12em;
+  transition: padding-left var(--step-fast);
 }
+.about__facts li:hover { padding-left: 10px; }
 
 .about__facts .doto { color: var(--violet); }
 
@@ -398,17 +589,21 @@ code {
   border: var(--border);
   padding: clamp(16px, 3vw, 40px);
   text-align: center;
-  transition: all 0.15s steps(3);
+  transition: background var(--step-fast), color var(--step-fast),
+              border-color var(--step-fast), box-shadow var(--step-fast);
 }
 
-.contact__mail:hover {
+.contact__mail:hover,
+.contact__mail:focus-visible {
   background: var(--violet);
   color: var(--black);
   border-color: var(--violet);
+  box-shadow: 8px 8px 0 rgba(123, 92, 255, 0.3);
 }
 
 .contact__at { color: var(--violet); }
-.contact__mail:hover .contact__at { color: var(--black); }
+html.js .contact__at { animation: blink 2.2s steps(2) infinite; }
+.contact__mail:hover .contact__at { color: var(--black); animation: none; }
 
 .contact__links {
   display: flex;
@@ -422,11 +617,15 @@ code {
   padding: 10px 24px;
   font-size: 13px;
   letter-spacing: 0.15em;
+  transition: color var(--step-fast), border-color var(--step-fast),
+              transform var(--step-fast);
 }
 
-.contact__links a:hover {
+.contact__links a:hover,
+.contact__links a:focus-visible {
   border: 1px dotted var(--violet);
   color: var(--violet);
+  transform: translateY(-3px);
 }
 
 /* ==== FOOTER ============================================================ */
@@ -459,19 +658,29 @@ code {
 .modal__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10, 10, 10, 0.85);
+  background: rgba(10, 10, 10, 0.82);
   background-image: radial-gradient(rgba(123, 92, 255, 0.1) 1px, transparent 1px);
   background-size: 18px 18px;
+  backdrop-filter: blur(3px) grayscale(0.5);
+  -webkit-backdrop-filter: blur(3px) grayscale(0.5);
 }
+html.js .modal:not([hidden]) .modal__backdrop { animation: appear 0.2s steps(4) both; }
 
 .modal__panel {
   position: relative;
   background: var(--black);
   border: var(--border);
+  box-shadow: 10px 10px 0 var(--violet-glow);
   width: min(820px, 100%);
   max-height: 85svh;
   display: flex;
   flex-direction: column;
+}
+html.js .modal:not([hidden]) .modal__panel { animation: panel-in 0.3s steps(6) both; }
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .modal__head {
@@ -497,36 +706,69 @@ code {
   width: 36px;
   height: 36px;
   cursor: pointer;
+  transition: background var(--step-fast), color var(--step-fast),
+              border-color var(--step-fast), transform var(--step-fast);
 }
-.modal__close:hover { background: var(--violet); color: var(--black); border-color: var(--violet); }
+.modal__close:hover,
+.modal__close:focus-visible {
+  background: var(--violet);
+  color: var(--black);
+  border-color: var(--violet);
+  transform: rotate(90deg);
+}
 
 .modal__body {
   padding: clamp(20px, 4vw, 40px);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--violet) var(--black-2);
 }
+.modal__body::-webkit-scrollbar { width: 8px; }
+.modal__body::-webkit-scrollbar-track { background: var(--black-2); }
+.modal__body::-webkit-scrollbar-thumb { background: var(--violet); }
 
 /* ==== MARKDOWN RENDER =================================================== */
+.markdown { counter-reset: mdh2; }
+
 .markdown h1, .markdown h2, .markdown h3 {
   font-family: var(--font-dot);
   font-weight: 900;
   text-transform: uppercase;
   line-height: 1.1;
-  margin: 24px 0 12px;
+  margin: 28px 0 12px;
 }
-.markdown h1 { font-size: clamp(28px, 4vw, 44px); }
-.markdown h2 { font-size: clamp(20px, 3vw, 30px); color: var(--violet); }
+.markdown h1 { font-size: clamp(28px, 4vw, 44px); text-shadow: 3px 3px 0 var(--violet-glow); }
+.markdown h2 {
+  font-size: clamp(20px, 3vw, 30px);
+  color: var(--violet);
+  border-bottom: var(--border-dotted);
+  padding-bottom: 8px;
+}
+.markdown h2::before {
+  counter-increment: mdh2;
+  content: "/0" counter(mdh2) " ";
+  color: var(--grey);
+  font-size: 0.55em;
+  letter-spacing: 0.2em;
+  vertical-align: middle;
+  margin-right: 8px;
+}
 .markdown h3 { font-size: 18px; }
 .markdown h1:first-child { margin-top: 0; }
 
 .markdown p { margin: 12px 0; color: var(--white); }
 .markdown a { color: var(--violet); border-bottom: 1px dotted var(--violet); }
+.markdown a:hover { background: var(--violet); color: var(--black); }
 .markdown ul, .markdown ol { margin: 12px 0 12px 20px; color: var(--grey); }
 .markdown li { margin: 6px 0; }
 .markdown li::marker { color: var(--violet); }
+.markdown strong { color: var(--white); }
+.markdown em { color: var(--grey); }
 
 .markdown blockquote {
   border-left: 3px dotted var(--violet);
-  padding: 8px 16px;
+  background: var(--black-2);
+  padding: 12px 16px;
   margin: 16px 0;
   color: var(--grey);
 }
@@ -537,6 +779,8 @@ code {
   overflow-x: auto;
   margin: 16px 0;
   background: var(--black-2);
+  scrollbar-width: thin;
+  scrollbar-color: var(--violet) var(--black-2);
 }
 .markdown pre code { border: none; padding: 0; }
 
@@ -565,6 +809,7 @@ code {
   text-align: left;
 }
 .markdown th { color: var(--violet); text-transform: uppercase; letter-spacing: 0.1em; }
+.markdown tbody tr:hover { background: var(--black-2); }
 
 /* ==== RESPONSIVE ======================================================== */
 @media (max-width: 720px) {
@@ -597,13 +842,30 @@ code {
 
   .hero__sub { grid-template-columns: 1fr; }
   .hero__scroll { display: none; }
+  .hero__line { text-shadow: 3px 3px 0 var(--violet-glow); }
   .about { grid-template-columns: 1fr; }
   .footer { flex-direction: column; text-align: center; }
   .footer__dots { display: none; }
+
+  /* Cartes : l'inversion au tap est gérée par :active, pas :hover. */
+  .project-card:not(.project-card--placeholder):active {
+    background: var(--white);
+    color: var(--black);
+  }
+
+  /* Les slots « à venir » n'apportent rien sur une colonne : masqués. */
+  .project-card--placeholder { display: none; }
 }
 
 /* ==== REDUCED MOTION ==================================================== */
+/* Coupe TOUT le mouvement, y compris les reveals : contenu immédiat. */
 @media (prefers-reduced-motion: reduce) {
-  .marquee__inner, .hero__scroll .doto { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
   html { scroll-behavior: auto; }
+  html.js .reveal { opacity: 1; transform: none; }
+  .scanline { display: none; }
 }

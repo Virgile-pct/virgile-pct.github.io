@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="no-js">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,8 +13,16 @@
 </head>
 <body>
 
-  <!-- ======= GRAIN / DOT OVERLAY ======= -->
+  <!-- ======= COUCHES D'AMBIANCE (grain, trame, scanline) ======= -->
   <div class="dot-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <!-- ======= CURSEUR CUSTOM (activé par JS, pointeur fin uniquement) ======= -->
+  <div class="cursor" data-cursor aria-hidden="true"></div>
+
+  <!-- ======= BARRE DE PROGRESSION DE LECTURE ======= -->
+  <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
 
   <!-- ======= NAV ======= -->
   <header class="nav">
@@ -39,12 +47,15 @@
     <!-- ======= HERO ======= -->
     <section class="hero">
       <div class="hero__meta">
-        <span>PORTFOLIO — ÉDITION 01</span>
-        <span data-clock>00:00:00</span>
+        <span class="hero__boot" data-boot-line>PORTFOLIO — ÉDITION 01</span>
+        <span class="hero__status">
+          <span class="status-square" aria-hidden="true"></span>
+          <span data-clock>00:00:00</span>
+        </span>
       </div>
       <h1 class="hero__title">
-        <span class="hero__line doto">VIRGILE</span>
-        <span class="hero__line doto hero__line--violet">POURCHET</span>
+        <span class="hero__line-mask"><span class="hero__line doto" data-scramble>VIRGILE</span></span>
+        <span class="hero__line-mask"><span class="hero__line doto hero__line--violet" data-scramble>POURCHET</span></span>
       </h1>
       <div class="hero__sub">
         <p class="hero__tag">[ BUT GEII — EMBARQUÉ · AUTOMATION · WEB ]</p>
@@ -73,7 +84,7 @@
 
     <!-- ======= PROJECTS ======= -->
     <section class="section" id="projects">
-      <div class="section__head">
+      <div class="section__head reveal">
         <h2 class="section__title doto">PROJETS</h2>
         <span class="section__index">/ 01</span>
       </div>
@@ -87,16 +98,16 @@
 
     <!-- ======= ABOUT ======= -->
     <section class="section" id="about">
-      <div class="section__head">
+      <div class="section__head reveal">
         <h2 class="section__title doto">À PROPOS</h2>
         <span class="section__index">/ 02</span>
       </div>
       <div class="about">
-        <div class="about__portrait" aria-hidden="true">
+        <div class="about__portrait reveal" aria-hidden="true">
           <canvas data-dot-portrait width="320" height="320"></canvas>
-          <span class="about__portrait-label">[ PORTRAIT.RAW ]</span>
+          <span class="about__portrait-label" data-portrait-label>[ PORTRAIT.RAW — IDLE ]</span>
         </div>
-        <div class="about__text">
+        <div class="about__text reveal">
           <p class="about__lead">
             J'étudie le génie électrique et l'informatique industrielle
             (BUT GEII, parcours électrotechnique) à l'IUT de Châteauroux.
@@ -129,11 +140,11 @@
 
     <!-- ======= CONTACT ======= -->
     <section class="section" id="contact">
-      <div class="section__head">
+      <div class="section__head reveal">
         <h2 class="section__title doto">CONTACT</h2>
         <span class="section__index">/ 03</span>
       </div>
-      <div class="contact">
+      <div class="contact reveal">
         <a class="contact__mail doto" href="mailto:pourchetvirgile@gmail.com">
           POURCHETVIRGILE<span class="contact__at">@</span>GMAIL.COM
         </a>
@@ -153,13 +164,13 @@
   <footer class="footer">
     <span>© <span data-year>2026</span> — VIRGILE POURCHET</span>
     <span class="footer__dots" aria-hidden="true">● ● ● ● ● ● ● ● ● ● ● ●</span>
-    <span>FAIT MAIN. SANS FRAMEWORK.</span>
+    <span>FAIT MAIN, AVEC AGENTS IA. SANS FRAMEWORK.</span>
   </footer>
 
   <!-- ======= PROJECT MODAL ======= -->
   <div class="modal" data-modal hidden>
     <div class="modal__backdrop" data-modal-close></div>
-    <article class="modal__panel">
+    <article class="modal__panel" role="dialog" aria-modal="true" aria-label="Fiche projet">
       <header class="modal__head">
         <span class="modal__kicker" data-modal-kicker>PROJET</span>
         <button class="modal__close" data-modal-close aria-label="Fermer">✕</button>
