@@ -1,0 +1,147 @@
+/*! DOTKIT v1.0.0 — styles compagnons.
+    Tout mouvement est cranté : steps(), jamais d'easing fluide.
+    Les états initiaux cachés n'existent que sous html.dk-js (posée par
+    le JS) : sans JavaScript, le contenu reste entièrement visible. */
+
+:root {
+  --dk-accent: #7b5cff;
+  --dk-ink: #f4f2ef;
+  --dk-paper: #0a0a0a;
+  --dk-step-fast: 0.18s steps(4);
+  --dk-step-slow: 0.45s steps(7);
+}
+
+/* ==== 1. REVEAL ========================================================= */
+html.dk-js .dk-reveal {
+  transition: opacity var(--dk-step-slow), transform var(--dk-step-slow),
+              clip-path var(--dk-step-slow);
+  transition-delay: var(--dk-delay, 0ms);
+}
+html.dk-js .dk-reveal--rise { opacity: 0; transform: translateY(26px); }
+html.dk-js .dk-reveal--fade { opacity: 0; }
+html.dk-js .dk-reveal--wipe {
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+}
+html.dk-js .dk-reveal.dk-in {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 0);
+}
+
+/* ==== 2. SPLIT ========================================================== */
+.dk-split .dk-char { display: inline-block; white-space: pre; }
+html.dk-js .dk-split .dk-char {
+  opacity: 0;
+  transform: translateY(0.7em);
+  transition: opacity 0.3s steps(3), transform 0.3s steps(3);
+  transition-delay: calc(var(--ci) * 34ms);
+}
+html.dk-js .dk-split.dk-in .dk-char {
+  opacity: 1;
+  transform: none;
+}
+
+/* ==== 5. MARQUEE ======================================================== */
+.dk-marquee { overflow: hidden; }
+.dk-marquee__inner {
+  display: flex;
+  white-space: nowrap;
+  width: max-content;
+}
+.dk-marquee--on .dk-marquee__inner {
+  animation: dk-marquee var(--dk-marquee-duration, 12s) linear infinite;
+}
+.dk-marquee--reverse .dk-marquee__inner { animation-direction: reverse; }
+.dk-marquee:hover .dk-marquee__inner { animation-play-state: paused; }
+
+@keyframes dk-marquee {
+  to { transform: translateX(-50%); }
+}
+
+/* ==== 6. MAGNETIC / 7. TILT ============================================ */
+/* Pas de transition sur transform : les crans DOIVENT se voir.
+   Seul le retour au repos est adouci (et lui aussi, par steps). */
+.dk-magnetic, .dk-tilt { will-change: transform; }
+.dk-magnetic:not(:hover), .dk-tilt:not(:hover) {
+  transition: transform 0.25s steps(5);
+}
+
+/* ==== 8. CURSOR ========================================================= */
+html.dk-has-cursor, html.dk-has-cursor * { cursor: none !important; }
+
+.dk-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  pointer-events: none;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--dk-accent);
+  mix-blend-mode: difference;
+  transition: width var(--dk-step-fast), height var(--dk-step-fast),
+              margin var(--dk-step-fast), border-radius var(--dk-step-fast),
+              background var(--dk-step-fast);
+}
+.dk-cursor.is-locked {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border-radius: 0;
+  background: transparent;
+  border: 2px dotted var(--dk-accent);
+}
+.dk-cursor__label {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  font: 700 10px/1 ui-monospace, monospace;
+  letter-spacing: 0.2em;
+  color: var(--dk-accent);
+  white-space: nowrap;
+}
+
+/* ==== 9. TRAIL ========================================================== */
+.dk-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* ==== 11. GRID ========================================================== */
+.dk-grid-host { position: relative; }
+.dk-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.dk-grid-host > *:not(.dk-grid) { position: relative; }
+
+/* ==== 12. PROGRESS ====================================================== */
+.dk-progress {
+  display: block;
+  height: 3px;
+  width: 0;
+  background-image: repeating-linear-gradient(90deg,
+    var(--dk-accent) 0 6px, transparent 6px 10px);
+}
+
+/* ==== REDUCED MOTION ==================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html.dk-js .dk-reveal,
+  html.dk-js .dk-split .dk-char {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  .dk-marquee--on .dk-marquee__inner { animation: none; }
+  .dk-cursor, .dk-trail { display: none; }
+}

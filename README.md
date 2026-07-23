@@ -50,6 +50,8 @@ Les images vont dans `projects/assets/` et se référencent en relatif :
 ├── js/markdown.js      # Mini parseur markdown + frontmatter
 ├── js/app.js           # Chargement du manifest, cartes, modal
 ├── .nojekyll           # Désactive le build Jekyll de GitHub Pages
+├── lab/
+│   └── dotkit/         # DOTKIT — micro-bibliothèque UX maison (js, css, démo, README)
 └── projects/
     ├── manifest.json   # Liste ordonnée des slugs à afficher
     └── *.md            # Une fiche par projet

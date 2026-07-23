@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOTKIT — DÉMO</title>
+  <meta name="description" content="DOTKIT — micro-bibliothèque UX brutaliste à mouvement quantifié. Démonstration de chaque module.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Doto:wght@700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dotkit.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='2' width='4' height='4' fill='%237b5cff'/><rect x='10' y='2' width='4' height='4' fill='white'/><rect x='2' y='10' width='4' height='4' fill='white'/><rect x='10' y='10' width='4' height='4' fill='%237b5cff'/></svg>">
+  <style>
+    /* Styles de la page démo (la lib elle-même n'impose que dotkit.css). */
+    :root {
+      --black: #0a0a0a; --black-2: #111; --white: #f4f2ef;
+      --grey: #8a8a8a; --violet: #7b5cff;
+      --mono: "Space Mono", ui-monospace, monospace;
+      --dot: "Doto", monospace;
+      --gutter: clamp(16px, 4vw, 48px);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--black); color: var(--white);
+      font-family: var(--mono); font-size: 15px; line-height: 1.6;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--violet); color: var(--black); }
+    a { color: inherit; text-decoration: none; }
+    .doto { font-family: var(--dot); font-weight: 900; }
+
+    .bar { position: fixed; top: 0; left: 0; right: 0; z-index: 300; pointer-events: none; }
+
+    header.head {
+      padding: var(--gutter); border-bottom: 1px solid var(--white);
+      display: flex; justify-content: space-between; align-items: baseline;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .head__brand { font-size: clamp(40px, 9vw, 110px); line-height: 0.95; text-transform: uppercase; }
+    .head__brand em { color: var(--violet); font-style: normal; }
+    .head__meta { font-size: 12px; color: var(--grey); letter-spacing: 0.15em; text-align: right; }
+    .head__meta strong { color: var(--violet); }
+
+    section.mod {
+      padding: clamp(40px, 7vw, 80px) var(--gutter);
+      border-bottom: 1px dotted var(--grey);
+    }
+    .mod__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; }
+    .mod__title { font-size: clamp(22px, 4vw, 40px); text-transform: uppercase; }
+    .mod__index { color: var(--violet); font-size: 13px; letter-spacing: 0.2em; }
+    .mod__desc { color: var(--grey); max-width: 60ch; margin-bottom: 28px; }
+    .mod pre {
+      border: 1px dotted var(--grey); background: var(--black-2);
+      padding: 14px 16px; overflow-x: auto; font-size: 12.5px;
+      margin-top: 28px; color: var(--grey);
+    }
+    .mod pre b { color: var(--violet); font-weight: 400; }
+
+    .demo-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+
+    .btn {
+      display: inline-block; border: 1px solid var(--white);
+      padding: 14px 28px; letter-spacing: 0.15em; font-size: 13px;
+      text-transform: uppercase; background: none; color: var(--white);
+      font-family: var(--mono); cursor: pointer;
+    }
+    .btn:hover { background: var(--violet); border-color: var(--violet); color: var(--black); }
+
+    .card {
+      border: 1px solid var(--white); padding: 24px; min-height: 180px;
+      width: min(300px, 100%); display: flex; flex-direction: column; gap: 12px;
+      background: var(--black);
+    }
+    .card b { font-family: var(--dot); font-size: 22px; text-transform: uppercase; font-weight: 900; }
+    .card span { color: var(--grey); font-size: 13px; }
+
+    .big { font-size: clamp(28px, 6vw, 64px); text-transform: uppercase; }
+    .stat { display: flex; gap: 48px; flex-wrap: wrap; }
+    .stat div { text-align: left; }
+    .stat .doto { font-size: clamp(36px, 7vw, 72px); color: var(--violet); font-variant-numeric: tabular-nums; }
+    .stat small { color: var(--grey); letter-spacing: 0.15em; font-size: 12px; }
+
+    .marquee-demo { border: 1px solid var(--white); background: var(--violet); color: var(--black); }
+    .marquee-demo .dk-marquee__inner span { font-family: var(--dot); font-weight: 700; font-size: 20px; padding: 10px 0; letter-spacing: 0.1em; }
+
+    .grid-demo { border: 1px solid var(--white); padding: clamp(24px, 6vw, 64px); text-align: center; }
+
+    footer { padding: 24px var(--gutter); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--grey); letter-spacing: 0.12em; }
+    footer a { border-bottom: 1px dotted var(--violet); color: var(--violet); }
+  </style>
+</head>
+<body>
+
+  <div class="bar"><div data-dk="progress"></div></div>
+
+  <header class="head">
+    <h1 class="head__brand doto"><span data-dk="scramble">DOT</span><em data-dk="scramble">KIT</em></h1>
+    <p class="head__meta">
+      MICRO-BIBLIOTHÈQUE UX — <strong>QUANTIZED MOTION</strong><br>
+      V1.0.0 · ZÉRO DÉPENDANCE · <span data-dk="clock">00:00:00</span>
+    </p>
+  </header>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">REVEAL</h2><span class="mod__index">/ 01</span></div>
+    <p class="mod__desc">Révélation au scroll par crans — trois variantes (rise, fade, wipe),
+       cascade automatique des enfants avec <code>data-dk-stagger</code>.</p>
+    <div class="demo-row" data-dk="reveal" data-dk-variant="rise" data-dk-stagger="90">
+      <div class="card"><b>rise</b><span>Monte de 26 px, en 7 crans.</span></div>
+      <div class="card"><b>rise +90ms</b><span>Chaque enfant part 90 ms après l'autre.</span></div>
+      <div class="card"><b>rise +180ms</b><span>La cascade est déclarative.</span></div>
+    </div>
+    <pre>&lt;div <b>data-dk="reveal"</b> <b>data-dk-variant="rise"</b> <b>data-dk-stagger="90"</b>&gt;…&lt;/div&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">SPLIT</h2><span class="mod__index">/ 02</span></div>
+    <p class="mod__desc">Le texte est découpé lettre par lettre, chaque caractère monte en cascade
+       crantée. Le texte original reste lisible par les lecteurs d'écran (aria-label).</p>
+    <p class="big doto" data-dk="split">LETTRE PAR LETTRE.</p>
+    <pre>&lt;h2 <b>data-dk="split"</b>&gt;LETTRE PAR LETTRE.&lt;/h2&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">SCRAMBLE</h2><span class="mod__index">/ 03</span></div>
+    <p class="mod__desc">Décodage dot-matrix : le texte émerge de glyphes de points, de gauche à
+       droite. Au scroll, ou au survol avec <code>data-dk-trigger="hover"</code> — essayez ci-dessous.</p>
+    <p class="big doto" data-dk="scramble" data-dk-trigger="hover">SURVOLEZ-MOI.</p>
+    <pre>&lt;p <b>data-dk="scramble"</b> <b>data-dk-trigger="hover"</b>&gt;SURVOLEZ-MOI.&lt;/p&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">COUNTER</h2><span class="mod__index">/ 04</span></div>
+    <p class="mod__desc">Odomètre cranté : 24 ticks vers la valeur cible, déclenché à l'entrée à l'écran.</p>
+    <div class="stat">
+      <div><div class="doto" data-dk="counter" data-dk-to="1327">0</div><small>COMMITS</small></div>
+      <div><div class="doto" data-dk="counter" data-dk-to="70">0</div><small>KG DE LEST</small></div>
+      <div><div class="doto" data-dk="counter" data-dk-to="99.9">0</div><small>% UPTIME</small></div>
+    </div>
+    <pre>&lt;span <b>data-dk="counter"</b> <b>data-dk-to="1327"</b>&gt;&lt;/span&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">MARQUEE</h2><span class="mod__index">/ 05</span></div>
+    <p class="mod__desc">Ticker infini généré depuis un contenu unique : duplication automatique
+       jusqu'à couvrir la largeur, vitesse en px/s, pause au survol.</p>
+    <div class="marquee-demo" data-dk="marquee" data-dk-speed="80">
+      <span>DOTKIT ● QUANTIZED MOTION ● ZÉRO DÉPENDANCE ●&nbsp;</span>
+    </div>
+    <pre>&lt;div <b>data-dk="marquee"</b> <b>data-dk-speed="80"</b>&gt;&lt;span&gt;CONTENU ●&lt;/span&gt;&lt;/div&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">MAGNETIC</h2><span class="mod__index">/ 06</span></div>
+    <p class="mod__desc">Le bouton est attiré par le curseur — mais par crans de 4 px : l'aimantation
+       « saute », elle ne glisse pas. Retour sec au repos. Souris uniquement.</p>
+    <div class="demo-row">
+      <button class="btn" type="button" data-dk="magnetic">ATTIRE-MOI</button>
+      <button class="btn" type="button" data-dk="magnetic" data-dk-strength="24">PLUS FORT (24)</button>
+    </div>
+    <pre>&lt;button <b>data-dk="magnetic"</b> <b>data-dk-strength="14"</b>&gt;…&lt;/button&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">TILT</h2><span class="mod__index">/ 07</span></div>
+    <p class="mod__desc">Inclinaison 3D par paliers de 1,5° — le « mechanical tilt » : la carte
+       s'incline comme un plateau sur rotule crantée, pas comme un chiffon.</p>
+    <div class="demo-row">
+      <div class="card" data-dk="tilt"><b>PALIER 1,5°</b><span>Déplacez la souris sur la carte.</span></div>
+      <div class="card" data-dk="tilt" data-dk-max="12"><b>MAX 12°</b><span>Amplitude configurable.</span></div>
+    </div>
+    <pre>&lt;div <b>data-dk="tilt"</b> <b>data-dk-max="6"</b>&gt;…&lt;/div&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">CURSOR + TRAIL</h2><span class="mod__index">/ 08</span></div>
+    <p class="mod__desc">Le point violet qui vous suit devient un viseur carré sur l'interactif —
+       et il laisse derrière lui une traînée de points posés sur une grille de 12 px,
+       qui s'éteignent par paliers. Activés ici via les attributs du script.
+       Un élément peut afficher un mot à côté du viseur :</p>
+    <div class="demo-row">
+      <button class="btn" type="button" data-dk-cursor-label="CLIQUER">VISEUR + LABEL</button>
+    </div>
+    <pre>&lt;script src="dotkit.js" <b>data-dk-cursor</b> <b>data-dk-trail</b>&gt;&lt;/script&gt;
+&lt;button <b>data-dk-cursor-label="CLIQUER"</b>&gt;…&lt;/button&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">GRID</h2><span class="mod__index">/ 09</span></div>
+    <p class="mod__desc">Une trame de points en fond de bloc — les points s'écartent sous le
+       curseur. Statique au tactile et en reduced-motion.</p>
+    <div class="grid-demo" data-dk="grid">
+      <p class="big doto">LA TRAME EST VIVANTE.</p>
+      <p style="color: var(--grey)">Déplacez la souris dans ce cadre.</p>
+    </div>
+    <pre>&lt;div <b>data-dk="grid"</b>&gt;…contenu…&lt;/div&gt;</pre>
+  </section>
+
+  <section class="mod">
+    <div class="mod__head"><h2 class="mod__title doto" data-dk="split">PARALLAX + TELEMETRY</h2><span class="mod__index">/ 10</span></div>
+    <p class="mod__desc">Décalage vertical quantifié par crans de 8 px, borné à ±60 px — jamais de
+       détournement du scroll. Et les modules « télémétrie » : progress (la barre en haut
+       de cette page), clock (l'horloge de l'en-tête).</p>
+    <div class="demo-row">
+      <div class="card" data-dk="parallax" data-dk-speed="0.25"><b>0.25</b><span>Je glisse par crans de 8 px.</span></div>
+      <div class="card" data-dk="parallax" data-dk-speed="-0.25"><b>-0.25</b><span>Moi je descends.</span></div>
+    </div>
+    <pre>&lt;div <b>data-dk="parallax"</b> <b>data-dk-speed="0.25"</b>&gt;…&lt;/div&gt;
+&lt;div <b>data-dk="progress"</b>&gt;&lt;/div&gt;  &lt;span <b>data-dk="clock"</b>&gt;&lt;/span&gt;</pre>
+  </section>
+
+  <footer>
+    <span>DOTKIT V1.0.0 — FAIT MAIN, AVEC AGENTS IA.</span>
+    <span><a href="https://virgile-pct.github.io">PORTFOLIO ↗</a> · <a href="https://github.com/Virgile-pct/virgile-pct.github.io/tree/main/lab/dotkit">SOURCE ↗</a></span>
+  </footer>
+
+  <script src="dotkit.js" data-dk-cursor data-dk-trail></script>
+</body>
+</html>
