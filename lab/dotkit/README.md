@@ -68,4 +68,5 @@ DotKit.quantize(v, s)  // l'arrondi au cran, exposé
 
 ## Poids
 
-~13 Ko de JS + ~4 Ko de CSS, non minifiés, non compressés. Aucune dépendance.
+~19 Ko de JS + ~4 Ko de CSS, non minifiés, non compressés, commentaires
+inclus. Aucune dépendance.
