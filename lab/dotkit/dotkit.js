@@ -5,7 +5,7 @@
     scramble), l'API déclarative d'AOS (data-attributes, auto-init).
     Garde-fous natifs : prefers-reduced-motion → états finaux immédiats ;
     pointeur tactile → aucun effet souris ; sans JS → contenu intact.
-    https://github.com/Virgile-pct/virgile-pct.github.io (lab/dotkit) */
+    https://github.com/Virgile-pct/dotkit — licence MIT */
 
 (function (global) {
   "use strict";

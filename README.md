@@ -51,7 +51,7 @@ Les images vont dans `projects/assets/` et se référencent en relatif :
 ├── js/app.js           # Chargement du manifest, cartes, modal
 ├── .nojekyll           # Désactive le build Jekyll de GitHub Pages
 ├── lab/
-│   └── dotkit/         # DOTKIT — micro-bibliothèque UX maison (js, css, démo, README)
+│   └── dotkit/         # DOTKIT — copie embarquée ; source : github.com/Virgile-pct/dotkit
 └── projects/
     ├── manifest.json   # Liste ordonnée des slugs à afficher
     └── *.md            # Une fiche par projet

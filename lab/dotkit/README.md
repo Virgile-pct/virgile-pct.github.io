@@ -1,4 +1,8 @@
-# DOTKIT
+# DOTKIT (copie embarquée)
+
+> **Source canonique : [github.com/Virgile-pct/dotkit](https://github.com/Virgile-pct/dotkit)** —
+> ce dossier est la copie « vendored » que le portfolio charge. Pour toute
+> évolution, modifier le repo dotkit puis resynchroniser cette copie.
 
 Micro-bibliothèque UX brutaliste, zéro dépendance. **Démo : [virgile-pct.github.io/lab/dotkit/demo.html](https://virgile-pct.github.io/lab/dotkit/demo.html)**
 

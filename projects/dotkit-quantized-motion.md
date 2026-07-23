@@ -49,4 +49,4 @@ entièrement visible. Un seul IntersectionObserver mutualisé, des canvas qui
 ne calculent que visibles. La règle : l'effet est un bonus, jamais un péage.
 
 [Essayer la démo ↗](lab/dotkit/demo.html) ·
-[Lire le code ↗](https://github.com/Virgile-pct/virgile-pct.github.io/tree/main/lab/dotkit)
+[Le repo open source ↗](https://github.com/Virgile-pct/dotkit)
