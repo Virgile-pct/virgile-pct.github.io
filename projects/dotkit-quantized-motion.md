@@ -35,10 +35,16 @@ Révélation au scroll (trois variantes, cascade), texte lettre par lettre,
 décodage dot-matrix, compteur odomètre, ticker infini, bouton magnétique,
 inclinaison mécanique, curseur-viseur avec label, traînée de points,
 parallaxe bornée, trame de points interactive, barre de lecture, horloge.
-Le tout en ~13 Ko de JavaScript lisible, API déclarative :
+Le tout en ~19 Ko de JavaScript lisible, API déclarative :
 
 ```html
 <div data-dk="reveal tilt" data-dk-stagger="90">…</div>
+```
+
+Publiée sur npm — n'importe qui peut l'installer :
+
+```bash
+npm install dotkitjs
 ```
 
 ## Les garde-fous
@@ -49,4 +55,5 @@ entièrement visible. Un seul IntersectionObserver mutualisé, des canvas qui
 ne calculent que visibles. La règle : l'effet est un bonus, jamais un péage.
 
 [Essayer la démo ↗](lab/dotkit/demo.html) ·
-[Le repo open source ↗](https://github.com/Virgile-pct/dotkit)
+[Le repo open source ↗](https://github.com/Virgile-pct/dotkit) ·
+[Sur npm ↗](https://www.npmjs.com/package/dotkitjs)
