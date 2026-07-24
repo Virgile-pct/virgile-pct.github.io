@@ -1,4 +1,4 @@
-/*! DOTKIT v1.0.0 — micro-bibliothèque UX brutaliste, zéro dépendance.
+/*! DOTKIT v1.0.1 — micro-bibliothèque UX brutaliste, zéro dépendance.
     Concept : « quantized motion » — tout mouvement est arrondi à un cran,
     jamais fluide. Inspirations : le langage visuel de Nothing (dot-matrix,
     télémétrie mono), les mécaniques cultes de Codrops (magnetic, trail,
@@ -279,7 +279,9 @@
         /* Extinction par PALIERS : le rayon saute, ne glisse pas. */
         const r = Math.ceil(d.life / 4);
         ctx.fillStyle = d.violet ? "#7b5cff" : "rgba(244,242,239,0.7)";
-        ctx.fillRect(d.x - r, d.y - r, r * 2, r * 2);
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+        ctx.fill();
       });
       raf = dots.length ? requestAnimationFrame(loop) : null;
     }
@@ -365,7 +367,9 @@
             }
           }
           ctx.fillStyle = "rgba(244,242,239,0.22)";
-          ctx.fillRect(x + ox - r / 2, y + oy - r / 2, r, r);
+          ctx.beginPath();
+          ctx.arc(x + ox, y + oy, r / 2, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
     }
@@ -469,7 +473,7 @@
   }
 
   const api = {
-    version: "1.0.0",
+    version: "1.0.1",
     init: init,
     scan: scan,
     cursor: initCursor,

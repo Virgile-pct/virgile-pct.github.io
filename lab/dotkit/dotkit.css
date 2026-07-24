@@ -1,4 +1,4 @@
-/*! DOTKIT v1.0.0 — styles compagnons.
+/*! DOTKIT v1.0.1 — styles compagnons.
     Tout mouvement est cranté : steps(), jamais d'easing fluide.
     Les états initiaux cachés n'existent que sous html.dk-js (posée par
     le JS) : sans JavaScript, le contenu reste entièrement visible. */
@@ -127,10 +127,13 @@ html.dk-has-cursor, html.dk-has-cursor * { cursor: none !important; }
 /* ==== 12. PROGRESS ====================================================== */
 .dk-progress {
   display: block;
-  height: 3px;
+  height: 4px;
   width: 0;
-  background-image: repeating-linear-gradient(90deg,
-    var(--dk-accent) 0 6px, transparent 6px 10px);
+  /* Pointillé ROND : une pastille par tuile de 10 px. */
+  background-image: radial-gradient(circle closest-side,
+    var(--dk-accent) 92%, transparent);
+  background-size: 10px 4px;
+  background-repeat: repeat-x;
 }
 
 /* ==== REDUCED MOTION ==================================================== */
