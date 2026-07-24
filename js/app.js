@@ -163,52 +163,65 @@
     });
   });
 
-  /* ---- Portrait en pointillés : onde lente + répulsion sous la souris.
-     Ne calcule que lorsqu'il est visible ; statique en reduced-motion. ---- */
+  /* ---- Portrait en pointillés : le vrai visage, converti en nuage de
+     points (assets/portrait.json, généré par assets/generate_portrait.py —
+     la photo d'origine n'est jamais publiée). Onde lente + répulsion sous
+     la souris. Fallback génératif si le JSON ne charge pas. ---- */
   safe("portrait", function () {
     const canvas = document.querySelector("[data-dot-portrait]");
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     const label = document.querySelector("[data-portrait-label]");
-    const size = 320;
-    const step = 16;
+    const size = 640;
+    let dots = null;   /* [[x, y, rayon, violet], …] à l'échelle 640 */
     let mouseX = null, mouseY = null;
     let running = false, raf = null, last = 0;
 
-    function draw(t) {
-      ctx.clearRect(0, 0, size, size);
+    /* Secours : l'ancien visage génératif, à la même échelle. */
+    function generative() {
+      const out = [];
+      const step = 32;
       for (let gy = step / 2; gy < size; gy += step) {
         for (let gx = step / 2; gx < size; gx += step) {
           const cx = gx - size / 2;
           const cy = gy - size / 2;
           const d = Math.sqrt(cx * cx + cy * cy) / (size / 2);
           if (d > 1) continue;
-
-          /* Rayon de base : la forme du « visage » génératif. */
-          let r = Math.max(1, 6 * (1 - d) + Math.sin(gx * 0.08) * Math.cos(gy * 0.08) * 3);
-          let ox = 0, oy = 0;
-
-          /* Onde de respiration, très lente. */
-          r += Math.sin(t / 900 + d * 5) * 1.1;
-
-          /* Répulsion autour du pointeur : les points s'écartent. */
-          if (mouseX !== null) {
-            const dx = gx - mouseX;
-            const dy = gy - mouseY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 70 && dist > 0.01) {
-              const force = (1 - dist / 70) * 10;
-              ox = (dx / dist) * force;
-              oy = (dy / dist) * force;
-              r += (1 - dist / 70) * 2;
-            }
-          }
-
-          ctx.beginPath();
-          ctx.arc(gx + ox, gy + oy, Math.max(0.4, Math.abs(r)), 0, Math.PI * 2);
-          ctx.fillStyle = d < 0.45 ? "#7b5cff" : "rgba(244,242,239,0.8)";
-          ctx.fill();
+          const r = Math.max(2, 12 * (1 - d) + Math.sin(gx * 0.04) * Math.cos(gy * 0.04) * 6);
+          out.push([gx, gy, r, d < 0.45 ? 1 : 0]);
         }
+      }
+      return out;
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, size, size);
+      if (!dots) return;
+      for (let i = 0; i < dots.length; i++) {
+        const p = dots[i];
+        let r = p[2];
+        let ox = 0, oy = 0;
+
+        /* Onde de respiration, très lente, qui traverse le visage. */
+        r += Math.sin(t / 900 + (p[0] + p[1]) / 130) * 0.5;
+
+        /* Répulsion autour du pointeur : les points s'écartent. */
+        if (mouseX !== null) {
+          const dx = p[0] - mouseX;
+          const dy = p[1] - mouseY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 140 && dist > 0.01) {
+            const force = (1 - dist / 140) * 20;
+            ox = (dx / dist) * force;
+            oy = (dy / dist) * force;
+            r += (1 - dist / 140) * 3;
+          }
+        }
+
+        ctx.beginPath();
+        ctx.arc(p[0] + ox, p[1] + oy, Math.max(0.4, Math.abs(r)), 0, Math.PI * 2);
+        ctx.fillStyle = p[3] ? "#7b5cff" : "rgba(244,242,239,0.85)";
+        ctx.fill();
       }
     }
 
@@ -220,7 +233,12 @@
       raf = requestAnimationFrame(loop);
     }
 
-    draw(0);
+    /* Charge le vrai portrait ; bascule sur le génératif en cas d'échec. */
+    fetch("assets/portrait.json", { cache: "no-store" })
+      .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
+      .then(function (data) { dots = data.dots; draw(0); })
+      .catch(function () { dots = generative(); draw(0); });
+
     if (reduceMotion) return;
 
     /* Anime seulement quand le portrait est à l'écran. */
