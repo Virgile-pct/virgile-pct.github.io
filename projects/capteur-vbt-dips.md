@@ -9,7 +9,8 @@ tags: ESP32, C, Python, Signal
 
 > Velocity-Based Training : mesurer la vitesse d'exécution de chaque répétition
 > pour ajuster la charge au jour le jour. Aucun capteur du marché n'est pensé
-> pour la calisthénie lestée — alors je le construis.
+> pour la calisthénie lestée — alors je le construis. Tout est open source :
+> [github.com/Virgile-pct/capteur-dips ↗](https://github.com/Virgile-pct/capteur-dips)
 
 ## Pourquoi
 
@@ -42,8 +43,31 @@ sur la vitesse moyenne, moins de 1 % sur la vitesse pic et l'amplitude. La
 littérature scientifique valide l'approche IMU (r² ≈ 0,96–0,98 face à un
 transducteur linéaire de référence).
 
+## Premier contact avec le réel
+
+Le capteur physique (≈40 € de composants) a mesuré ses premières vraies séries
+en août 2026 — et le réel a donné trois leçons, chacune devenue du code :
+
+- Mon exemplaire de MPU6050 cachait un **décalage d'usine de +1,25 m/s² sur
+  l'axe Z**. Constant, donc invisible... jusqu'à ce que le boîtier tourne
+  pendant le geste et projette l'erreur sur la verticale — des mètres de fausse
+  amplitude. Réponse : une **calibration 6 faces** par exemplaire, comme en
+  sortie d'usine des appareils pros.
+- Détecter l'immobilité au **niveau** du gyroscope casse dès que son biais
+  dérive en température : seule la **variance** est un critère honnête.
+- Les verrouillages d'une série explosive ne durent que 0,2 s : les zéros de
+  vitesse sont devenus des **ancres ponctuelles**, acceptées seulement si leur
+  voisinage contient du mouvement franc — réglées par recherche sur grille
+  contre trois jeux de données (simulation, série contrôlée, série explosive).
+
+Résultat : dix dips mesurés à ±2 cm d'amplitude près, et un premier **profil
+charge-vitesse à R² = 0,995** sur quatre paliers de lest — le niveau de
+propreté d'un transducteur commercial, pour 40 €.
+
 ## Suite
 
-Prototype matériel (une vingtaine d'euros de composants), capture de vraies
-séances, puis version force avec cellule de charge — compatible BLE avec le
-protocole Tindeq Progressor pour s'intégrer à l'écosystème d'apps existant.
+Portage de l'algorithme en C++ sur l'ESP32 avec retour temps réel (BLE +
+vibreur au seuil de perte de vitesse), tableau de bord de progression sur mon
+VPS, puis version force avec cellule de charge dans la chaîne — compatible BLE
+avec le protocole Tindeq Progressor pour s'intégrer à l'écosystème d'apps
+existant.
