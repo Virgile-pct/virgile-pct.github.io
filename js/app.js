@@ -163,10 +163,8 @@
     });
   });
 
-  /* ---- Portrait en pointillés : le vrai visage, converti en nuage de
-     points (assets/portrait.json, généré par assets/generate_portrait.py —
-     la photo d'origine n'est jamais publiée). Onde lente + répulsion sous
-     la souris. Fallback génératif si le JSON ne charge pas. ---- */
+  /* ---- Portrait en pointillés : visage génératif abstrait, onde lente +
+     répulsion sous la souris. ---- */
   safe("portrait", function () {
     const canvas = document.querySelector("[data-dot-portrait]");
     if (!canvas) return;
@@ -177,7 +175,6 @@
     let mouseX = null, mouseY = null;
     let running = false, raf = null, last = 0;
 
-    /* Secours : l'ancien visage génératif, à la même échelle. */
     function generative() {
       const out = [];
       const step = 32;
@@ -233,11 +230,8 @@
       raf = requestAnimationFrame(loop);
     }
 
-    /* Charge le vrai portrait ; bascule sur le génératif en cas d'échec. */
-    fetch("assets/portrait.json", { cache: "no-store" })
-      .then(function (res) { if (!res.ok) throw new Error(res.status); return res.json(); })
-      .then(function (data) { dots = data.dots; draw(0); })
-      .catch(function () { dots = generative(); draw(0); });
+    dots = generative();
+    draw(0);
 
     if (reduceMotion) return;
 
