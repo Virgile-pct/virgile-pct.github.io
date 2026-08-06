@@ -13,11 +13,11 @@ tags: HTML/CSS, JS vanilla, Agents IA, GitHub Pages
 
 ## Le concept
 
-Un instrument qui s'allume. Direction artistique brutaliste — violet, noir,
-blanc, trames de points inspirées de Nothing — et une règle tenue partout :
-aucun mouvement fluide. Toutes les transitions sont crantées (`steps()`),
-mécaniques, comme un appareil de mesure. Séquence de boot au chargement,
-télémétrie vivante, curseur-viseur, portrait génératif qui réagit à la souris.
+Un instrument qui s'allume — en douceur. Direction artistique brutaliste :
+violet, noir, blanc, trames de points inspirées de Nothing. Et un langage de
+mouvement contemporain : easings expo, révélations soyeuses au scroll,
+curseur à traîne souple, 60 images/seconde. Séquence de boot au chargement,
+télémétrie vivante, portrait génératif qui réagit à la souris.
 
 ## Les choix techniques
 
@@ -25,7 +25,7 @@ télémétrie vivante, curseur-viseur, portrait génératif qui réagit à la so
 - Un **mini-parseur markdown maison** (~150 lignes) : chaque fiche projet est un simple fichier `.md` avec un en-tête, rendu à la volée.
 - **Progressive enhancement** : sans JavaScript, tout le contenu reste lisible ; les animations n'existent que si JS est là pour les mériter.
 - **Accessibilité** : `prefers-reduced-motion` coupe tout le mouvement, focus clavier visible, gestion du focus dans les fiches, curseur custom désactivé au tactile.
-- Le portrait en points ne calcule que lorsqu'il est visible à l'écran, à 30 images/seconde — le reste du temps, il dort.
+- Le portrait en points ne calcule que lorsqu'il est visible à l'écran — le reste du temps, il dort.
 
 ## La chaîne de production
 

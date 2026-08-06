@@ -24,17 +24,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="lab/dotkit/dotkit.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='4' cy='4' r='2' fill='%237b5cff'/><circle cx='12' cy='4' r='2' fill='white'/><circle cx='4' cy='12' r='2' fill='white'/><circle cx='12' cy='12' r='2' fill='%237b5cff'/></svg>">
 </head>
 <body>
 
   <a class="skip-link" href="#projects">Aller au contenu</a>
 
-  <!-- ======= COUCHES D'AMBIANCE (grain, trame, scanline) ======= -->
+  <!-- ======= COUCHES D'AMBIANCE (grain, trame) ======= -->
   <div class="dot-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
-  <div class="scanline" aria-hidden="true"></div>
 
   <!-- ======= CURSEUR CUSTOM (activé par JS, pointeur fin uniquement) ======= -->
   <div class="cursor" data-cursor aria-hidden="true"></div>
@@ -51,10 +49,10 @@
       <span class="nav__logo-text">V.POURCHET</span>
     </a>
     <nav class="nav__links">
-      <a href="#projects" data-dk="magnetic" data-dk-strength="8">PROJETS<sup>[<span data-project-count>0</span>]</sup></a>
-      <a href="#about" data-dk="magnetic" data-dk-strength="8">À PROPOS</a>
-      <a href="#contact" data-dk="magnetic" data-dk-strength="8">CONTACT</a>
-      <a href="lab/dotkit/demo.html" data-dk="magnetic" data-dk-strength="8">LAB ↗</a>
+      <a href="#projects" data-magnetic="8">PROJETS<sup>[<span data-project-count>0</span>]</sup></a>
+      <a href="#about" data-magnetic="8">À PROPOS</a>
+      <a href="#contact" data-magnetic="8">CONTACT</a>
+      <a href="lab/dotkit/demo.html" data-magnetic="8">LAB ↗</a>
     </nav>
     <button class="nav__burger" aria-label="Menu" data-burger>
       <span></span><span></span><span></span>
@@ -168,8 +166,8 @@
           POURCHETVIRGILE<span class="contact__at">@</span>GMAIL.COM
         </a>
         <div class="contact__links">
-          <a href="https://github.com/Virgile-pct" target="_blank" rel="noopener" data-dk="magnetic">GITHUB ↗</a>
-          <a href="https://manifold.markets/Virgile" target="_blank" rel="noopener" data-dk="magnetic">MANIFOLD ↗</a>
+          <a href="https://github.com/Virgile-pct" target="_blank" rel="noopener" data-magnetic="16">GITHUB ↗</a>
+          <a href="https://manifold.markets/Virgile" target="_blank" rel="noopener" data-magnetic="16">MANIFOLD ↗</a>
           <!-- LinkedIn : à ajouter quand le profil existe
           <a href="https://www.linkedin.com/in/..." target="_blank" rel="noopener">LINKEDIN ↗</a>
           -->
@@ -192,7 +190,7 @@
     <article class="modal__panel" role="dialog" aria-modal="true" aria-label="Fiche projet">
       <header class="modal__head">
         <span class="modal__kicker" data-modal-kicker>PROJET</span>
-        <button class="modal__close" data-modal-close aria-label="Fermer" data-dk="magnetic" data-dk-strength="10">✕</button>
+        <button class="modal__close" data-modal-close aria-label="Fermer" data-magnetic="10">✕</button>
       </header>
       <div class="modal__body markdown" data-modal-body>
         <!-- Markdown du projet rendu ici -->
@@ -200,7 +198,6 @@
     </article>
   </div>
 
-  <script src="lab/dotkit/dotkit.js" data-dk-trail></script>
   <script src="js/markdown.js"></script>
   <script src="js/app.js"></script>
 </body>

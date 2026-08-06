@@ -135,11 +135,11 @@
 
     let x = -100, y = -100, cx = -100, cy = -100, raf = null;
     function render() {
-      /* Petit retard mécanique (lerp), puis arrêt quand c'est calé. */
-      cx += (x - cx) * 0.45;
-      cy += (y - cy) * 0.45;
+      /* Traîne souple : le point glisse derrière le pointeur. */
+      cx += (x - cx) * 0.16;
+      cy += (y - cy) * 0.16;
       cursor.style.transform = "translate3d(" + cx + "px," + cy + "px,0)";
-      raf = (Math.abs(x - cx) + Math.abs(y - cy) > 0.3) ? requestAnimationFrame(render) : null;
+      raf = (Math.abs(x - cx) + Math.abs(y - cy) > 0.2) ? requestAnimationFrame(render) : null;
     }
     window.addEventListener("mousemove", function (e) {
       x = e.clientX; y = e.clientY;
@@ -161,6 +161,78 @@
     document.addEventListener("mouseenter", function () {
       cursor.style.opacity = "1";
     });
+  });
+
+  /* ---- Aimantation fluide : l'élément suit doucement le pointeur,
+     et revient en place avec l'élan de sa transition CSS. ---- */
+  safe("magnetic", function () {
+    if (!finePointer || reduceMotion) return;
+    document.querySelectorAll("[data-magnetic]").forEach(function (el) {
+      const strength = parseFloat(el.getAttribute("data-magnetic")) || 14;
+      el.style.transition = "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)";
+      el.addEventListener("mousemove", function (e) {
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        const dx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+        const dy = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+        el.style.transition = "transform 0.12s ease-out";
+        el.style.transform = "translate(" +
+          (Math.max(-1, Math.min(1, dx)) * strength).toFixed(1) + "px," +
+          (Math.max(-1, Math.min(1, dy)) * strength).toFixed(1) + "px)";
+      });
+      el.addEventListener("mouseleave", function () {
+        el.style.transition = "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
+        el.style.transform = "";
+      });
+    });
+  });
+
+  /* ---- Traînée de points : des bulles naissent sous le pointeur puis
+     s'estompent en rétrécissant. Fluide, jamais figé. ---- */
+  safe("trail", function () {
+    if (!finePointer || reduceMotion) return;
+    const canvas = document.createElement("canvas");
+    canvas.style.cssText = "position:fixed;inset:0;z-index:9999;pointer-events:none";
+    canvas.setAttribute("aria-hidden", "true");
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+    let dots = [], raf = null, lastX = -1e4, lastY = -1e4;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    function loop(now) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      dots = dots.filter(function (d) { return now - d.born < 550; });
+      dots.forEach(function (d) {
+        const life = 1 - (now - d.born) / 550;      /* 1 → 0 */
+        const eased = life * life;                   /* extinction douce */
+        ctx.globalAlpha = eased;
+        ctx.fillStyle = d.violet ? "#7b5cff" : "rgba(244,242,239,0.75)";
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, 4.5 * eased + 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      raf = dots.length ? requestAnimationFrame(loop) : null;
+    }
+    document.addEventListener("mousemove", function (e) {
+      /* Une bulle tous les ~18 px parcourus, à la position exacte. */
+      if (Math.hypot(e.clientX - lastX, e.clientY - lastY) < 18) return;
+      lastX = e.clientX; lastY = e.clientY;
+      dots.push({
+        x: e.clientX,
+        y: e.clientY,
+        born: performance.now(),
+        violet: dots.length % 3 === 0
+      });
+      if (dots.length > 36) dots.shift();
+      if (!raf) raf = requestAnimationFrame(loop);
+    }, { passive: true });
   });
 
   /* ---- Portrait en pointillés : visage génératif abstrait, onde lente +
@@ -225,8 +297,8 @@
     function loop(t) {
       raf = null;
       if (!running) return;
-      /* ~30 fps suffisent largement pour des points. */
-      if (t - last > 33) { last = t; draw(t); }
+      /* Plein régime : 60 fps pour un mouvement soyeux. */
+      if (t - last > 15) { last = t; draw(t); }
       raf = requestAnimationFrame(loop);
     }
 

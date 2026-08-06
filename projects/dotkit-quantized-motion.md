@@ -8,8 +8,8 @@ tags: JS vanilla, UX, Open source, Design system
 # DOTKIT
 
 > Une micro-bibliothèque UX de treize modules, zéro dépendance, avec un parti
-> pris : le **mouvement quantifié**. Elle anime ce site — et vous pouvez
-> l'essayer module par module dans la [démo interactive ↗](lab/dotkit/demo.html).
+> pris : le **mouvement quantifié** — l'esthétique mécanique, à essayer
+> module par module dans la [démo interactive ↗](lab/dotkit/demo.html).
 
 ## D'où elle vient
 
