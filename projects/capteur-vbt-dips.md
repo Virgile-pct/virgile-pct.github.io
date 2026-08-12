@@ -9,16 +9,16 @@ tags: ESP32, C, Python, Signal
 
 > Velocity-Based Training : mesurer la vitesse d'exécution de chaque répétition
 > pour ajuster la charge au jour le jour. Aucun capteur du marché n'est pensé
-> pour la calisthénie lestée — alors je le construis. Tout est open source :
-> [github.com/Virgile-pct/capteur-dips ↗](https://github.com/Virgile-pct/capteur-dips)
+> pour la calisthénie lestée — alors je le construis. Mesures et résultats :
+> [tableau de bord ↗](https://virgile-pct.github.io/capteur-dips/)
 
 ## Pourquoi
 
 Je prépare le championnat de France amateur de dips lestés (catégorie -66 kg).
 Le VBT est la méthode de référence en préparation de force : la vitesse de la
 barre dit la vérité sur la fatigue du jour. Mais les capteurs existants visent
-la barre de squat et coûtent 300 à 2 000 €, et côté open source, plus rien
-n'est maintenu. Le créneau est vide.
+la barre de squat et coûtent 300 à 2 000 €, et les rares projets libres du
+domaine sont abandonnés. Le créneau est vide.
 
 ## Architecture
 
@@ -31,9 +31,10 @@ n'est maintenu. Le créneau est vide.
 Intégrer une accélération pour obtenir une vitesse, ça dérive en quelques
 secondes — c'est le problème classique des IMU. Réponse : **ZUPT**
 (zero-velocity update) aux points morts du mouvement, plus une correction de
-dérive linéaire à chaque répétition. Et un détail qui change tout : borner les
-phases de mouvement à 2,5 % du pic de vitesse plutôt qu'au zéro strict, sinon
-la vitesse moyenne est diluée d'environ 25 %.
+dérive linéaire à chaque répétition. Et un détail qui change tout : les bornes
+d'une phase de mouvement ne se prennent pas au zéro strict de la vitesse, sinon
+les plateaux de vitesse quasi nulle sont avalés et la vitesse moyenne se trouve
+diluée d'un quart.
 
 ## Validation avant d'acheter quoi que ce soit
 
@@ -55,19 +56,30 @@ en août 2026 — et le réel a donné trois leçons, chacune devenue du code :
   sortie d'usine des appareils pros.
 - Détecter l'immobilité au **niveau** du gyroscope casse dès que son biais
   dérive en température : seule la **variance** est un critère honnête.
-- Les verrouillages d'une série explosive ne durent que 0,2 s : les zéros de
-  vitesse sont devenus des **ancres ponctuelles**, acceptées seulement si leur
-  voisinage contient du mouvement franc — réglées par recherche sur grille
-  contre trois jeux de données (simulation, série contrôlée, série explosive).
+- Les verrouillages d'une série explosive ne durent que deux dixièmes de
+  seconde. Les points d'ancrage de la vitesse ont dû devenir **ponctuels et
+  contextuels** plutôt que d'accepter toute immobilité apparente — réglés par
+  recherche sur grille contre trois jeux de données (simulation, série
+  contrôlée, série explosive).
 
 Résultat : dix dips mesurés à ±2 cm d'amplitude près, et un premier **profil
 charge-vitesse à R² = 0,995** sur quatre paliers de lest — le niveau de
 propreté d'un transducteur commercial, pour 40 €.
 
-## Suite
+## Où ça en est
 
-Portage de l'algorithme en C++ sur l'ESP32 avec retour temps réel (BLE +
-vibreur au seuil de perte de vitesse), tableau de bord de progression sur mon
-VPS, puis version force avec cellule de charge dans la chaîne — compatible BLE
-avec le protocole Tindeq Progressor pour s'intégrer à l'écosystème d'apps
-existant.
+L'algorithme tourne désormais **à bord de l'ESP32** : la carte compte ses
+répétitions elle-même, plus besoin d'un ordinateur à l'écoute. Le capteur
+n'impose plus aucune pause, reconnaît seul l'exercice pratiqué (11 séries de
+référence sur 11), écarte les mouvements parasites de la récupération sans
+jamais perdre une répétition maximale, et se trompe de 1,8 % sur la vitesse
+moyenne face à une vérité terrain. Le 1RM estimé sans maximum est tombé à
+**+41 kg contre +40 kg réels**.
+
+Suite : essais sur cinq athlètes de morphologies différentes, retour immédiat
+par vibration au seuil de fatigue, circuit imprimé sur mesure — et une piste
+plus ambitieuse, aider au jugement de la profondeur en compétition, aujourd'hui
+laissé à l'appréciation humaine sur un geste qui dure une demi-seconde.
+
+Le code source n'est plus public : la méthode est le fruit de plusieurs
+semaines de mesures et le projet a une suite commerciale envisagée.
