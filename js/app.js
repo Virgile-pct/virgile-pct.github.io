@@ -48,31 +48,22 @@
       });
     }
 
-    const GLYPHS = "·:●○/\\_";
-    document.querySelectorAll("[data-scramble]").forEach(function (el, lineIndex) {
-      if (reduceMotion) return;
-      const target = el.textContent;
-      const frames = 14;
-      let frame = 0;
-      const start = 220 + lineIndex * 120;
-      setTimeout(function () {
-        const timer = setInterval(function () {
-          frame++;
-          /* De gauche à droite, les lettres se fixent ; le reste bruite. */
-          const fixed = Math.floor((frame / frames) * target.length);
-          let out = "";
-          for (let i = 0; i < target.length; i++) {
-            out += i < fixed
-              ? target[i]
-              : GLYPHS[(Math.random() * GLYPHS.length) | 0];
-          }
-          el.textContent = out;
-          if (frame >= frames) {
-            el.textContent = target;
-            clearInterval(timer);
-          }
-        }, 46);
-      }, start);
+    /* Le nom, lettre à lettre : chaque caractère entre en se posant
+       (l'animation vit en CSS, cadencée par --ci et --base). */
+    document.querySelectorAll("[data-split-hero]").forEach(function (el) {
+      const text = el.textContent;
+      el.setAttribute("aria-label", text);
+      const base = parseFloat(el.getAttribute("data-split-base")) || 0;
+      el.textContent = "";
+      el.style.setProperty("--base", base);
+      Array.from(text).forEach(function (ch, i) {
+        const span = document.createElement("span");
+        span.className = "char";
+        span.setAttribute("aria-hidden", "true");
+        span.style.setProperty("--ci", i);
+        span.textContent = ch;
+        el.appendChild(span);
+      });
     });
   });
 
