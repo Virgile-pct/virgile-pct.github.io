@@ -235,6 +235,67 @@
     }, { passive: true });
   });
 
+  /* ---- Vague de points : l'identité (les points) mise en courbe (le
+     mouvement). Deux sinus superposés, amplifiés autour du pointeur. ---- */
+  safe("vague", function () {
+    const canvas = document.querySelector("[data-dot-wave]");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let w = 0, h = 150, mx = null, running = false, raf = null;
+
+    function draw(t) {
+      ctx.clearRect(0, 0, w, h);
+      for (let x = 12; x < w; x += 22) {
+        let amp = 24;
+        if (mx !== null) {
+          const d = Math.abs(x - mx);
+          amp += Math.exp(-(d * d) / (2 * 110 * 110)) * 36;
+        }
+        const y = h / 2 + Math.sin(x * 0.016 + t * 0.0014) * amp
+                        + Math.sin(x * 0.004 - t * 0.0009) * 10;
+        const r = 2.6 + Math.sin(x * 0.05 + t * 0.002) * 1.1;
+        ctx.beginPath();
+        ctx.arc(x, y, Math.max(0.8, r), 0, Math.PI * 2);
+        ctx.fillStyle = ((x / 22) | 0) % 5 === 0
+          ? "#7b5cff"
+          : "rgba(244,242,239,0.5)";
+        ctx.fill();
+      }
+    }
+
+    function loop(t) {
+      raf = null;
+      if (!running) return;
+      if (!w) resize(); /* viewport nul au chargement (onglet en fond) */
+      draw(t);
+      raf = requestAnimationFrame(loop);
+    }
+
+    function resize() {
+      w = canvas.width = canvas.offsetWidth || window.innerWidth;
+      h = canvas.height = 150;
+      draw(0);
+    }
+    resize();
+    window.addEventListener("resize", resize);
+    if (reduceMotion) return;
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        running = entries[0].isIntersecting;
+        if (running && !raf) raf = requestAnimationFrame(loop);
+      }, { threshold: 0.05 }).observe(canvas);
+    } else {
+      running = true;
+      raf = requestAnimationFrame(loop);
+    }
+
+    canvas.parentElement.addEventListener("mousemove", function (e) {
+      mx = e.clientX - canvas.getBoundingClientRect().left;
+    });
+    canvas.parentElement.addEventListener("mouseleave", function () { mx = null; });
+  });
+
   /* ---- Portrait en pointillés : visage génératif abstrait, onde lente +
      répulsion sous la souris. ---- */
   safe("portrait", function () {
@@ -372,6 +433,7 @@
     const card = document.createElement("button");
     card.className = "project-card reveal";
     card.type = "button";
+    card.setAttribute("data-num", pad(index));
     card.style.setProperty("--i", index % 3);
 
     const tags = (project.meta.tags || [])

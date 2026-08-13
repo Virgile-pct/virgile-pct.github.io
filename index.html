@@ -22,7 +22,7 @@
   <meta name="twitter:image" content="https://virgile-pct.github.io/assets/og.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;600;700;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='4' cy='4' r='2' fill='%237b5cff'/><circle cx='12' cy='4' r='2' fill='white'/><circle cx='4' cy='12' r='2' fill='white'/><circle cx='12' cy='12' r='2' fill='%237b5cff'/></svg>">
 </head>
@@ -63,6 +63,8 @@
 
     <!-- ======= HERO ======= -->
     <section class="hero">
+      <div class="halo halo--violet" style="width:56vw;height:56vw;top:-14%;right:-12%" aria-hidden="true"></div>
+      <div class="halo halo--soft" style="width:44vw;height:44vw;bottom:-18%;left:-10%" aria-hidden="true"></div>
       <div class="hero__meta">
         <span class="hero__boot" data-boot-line>PORTFOLIO — ÉDITION 01</span>
         <span class="hero__status">
@@ -78,8 +80,8 @@
         <p class="hero__tag">[ BUT GEII — EMBARQUÉ · AUTOMATION · WEB ]</p>
         <p class="hero__desc">
           Étudiant en génie électrique, je construis des systèmes qui tournent
-          sans moi&nbsp;: bots en production sur serveur Linux, e-commerce
-          familial, capteur embarqué pour le sport.
+          <em class="serif">sans moi</em> — bots en production sur serveur Linux,
+          e-commerce familial, capteur embarqué pour le sport.
         </p>
       </div>
       <div class="hero__scroll">
@@ -90,13 +92,9 @@
       </div>
     </section>
 
-    <!-- ======= MARQUEE ======= -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee__inner">
-        <span>BOTS ● EMBARQUÉ ● WEB ● DATA ● AUTOMATION ● </span>
-        <span>BOTS ● EMBARQUÉ ● WEB ● DATA ● AUTOMATION ● </span>
-        <span>BOTS ● EMBARQUÉ ● WEB ● DATA ● AUTOMATION ● </span>
-      </div>
+    <!-- ======= VAGUE DE POINTS ======= -->
+    <div class="wave" aria-hidden="true">
+      <canvas data-dot-wave></canvas>
     </div>
 
     <!-- ======= PROJECTS ======= -->
@@ -113,8 +111,20 @@
       </p>
     </section>
 
+    <!-- ======= MARQUEE ======= -->
+    <div class="marquee-tilt" aria-hidden="true">
+      <div class="marquee">
+        <div class="marquee__inner">
+          <span>BOTS&nbsp;&nbsp;<em class="serif">autonomes</em>&nbsp;&nbsp;●&nbsp;&nbsp;EMBARQUÉ&nbsp;&nbsp;●&nbsp;&nbsp;WEB&nbsp;&nbsp;<em class="serif">vivant</em>&nbsp;&nbsp;●&nbsp;&nbsp;DATA&nbsp;&nbsp;●&nbsp;&nbsp;<em class="serif">le goût du</em>&nbsp;&nbsp;MOUVEMENT&nbsp;&nbsp;●&nbsp;&nbsp;</span>
+          <span>BOTS&nbsp;&nbsp;<em class="serif">autonomes</em>&nbsp;&nbsp;●&nbsp;&nbsp;EMBARQUÉ&nbsp;&nbsp;●&nbsp;&nbsp;WEB&nbsp;&nbsp;<em class="serif">vivant</em>&nbsp;&nbsp;●&nbsp;&nbsp;DATA&nbsp;&nbsp;●&nbsp;&nbsp;<em class="serif">le goût du</em>&nbsp;&nbsp;MOUVEMENT&nbsp;&nbsp;●&nbsp;&nbsp;</span>
+          <span>BOTS&nbsp;&nbsp;<em class="serif">autonomes</em>&nbsp;&nbsp;●&nbsp;&nbsp;EMBARQUÉ&nbsp;&nbsp;●&nbsp;&nbsp;WEB&nbsp;&nbsp;<em class="serif">vivant</em>&nbsp;&nbsp;●&nbsp;&nbsp;DATA&nbsp;&nbsp;●&nbsp;&nbsp;<em class="serif">le goût du</em>&nbsp;&nbsp;MOUVEMENT&nbsp;&nbsp;●&nbsp;&nbsp;</span>
+        </div>
+      </div>
+    </div>
+
     <!-- ======= ABOUT ======= -->
     <section class="section" id="about">
+      <div class="halo halo--violet" style="width:40vw;height:40vw;top:10%;left:-16%" aria-hidden="true"></div>
       <div class="section__head reveal">
         <h2 class="section__title doto">À PROPOS</h2>
         <span class="section__index">/ 02</span>
@@ -126,9 +136,8 @@
         </div>
         <div class="about__text reveal">
           <p class="about__lead">
-            J'étudie le génie électrique et l'informatique industrielle
-            (BUT GEII, parcours électrotechnique) à l'IUT de Châteauroux.
-            À côté des cours, je construis.
+            J'étudie le génie électrique à l'IUT de Châteauroux.
+            À côté des cours, <strong>je construis.</strong>
           </p>
           <p>
             Ce qui me plaît&nbsp;: des systèmes qui tournent seuls, longtemps.
@@ -157,6 +166,7 @@
 
     <!-- ======= CONTACT ======= -->
     <section class="section" id="contact">
+      <div class="halo halo--violet" style="width:46vw;height:46vw;bottom:-24%;right:-14%" aria-hidden="true"></div>
       <div class="section__head reveal">
         <h2 class="section__title doto">CONTACT</h2>
         <span class="section__index">/ 03</span>
