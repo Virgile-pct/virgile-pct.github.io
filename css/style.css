@@ -20,7 +20,8 @@
   --line: rgba(244, 242, 239, 0.09);
 
   --font-mono: "Space Mono", ui-monospace, monospace;
-  --font-dot: "Doto", "Space Mono", monospace;
+  /* Display : Syne — large, expressive, organique (ex-Doto dot-matrix). */
+  --font-dot: "Syne", sans-serif;
   --font-serif: "Instrument Serif", Georgia, serif;
 
   --gutter: clamp(18px, 4.5vw, 64px);
@@ -59,7 +60,7 @@ code {
   padding: 1px 7px;
 }
 
-.doto { font-family: var(--font-dot); font-weight: 900; }
+.doto { font-family: var(--font-dot); font-weight: 800; }
 
 /* L'accent artistique : serif italique, bas de casse, contraste du mono. */
 .serif {
@@ -318,8 +319,8 @@ html.js .status-square { animation: pulse 2.4s var(--ease-io) infinite; }
 
 .hero__line {
   display: block;
-  font-size: clamp(52px, 13vw, 184px);
-  letter-spacing: 0.01em;
+  font-size: clamp(46px, 11.5vw, 164px);
+  letter-spacing: -0.025em;
   text-transform: uppercase;
 }
 html.js .hero__line { animation: rise 1.2s var(--ease) both; }
@@ -525,7 +526,7 @@ html.js .reveal.is-in {
   right: 6px;
   bottom: -30px;
   font-family: var(--font-dot);
-  font-weight: 900;
+  font-weight: 800;
   font-size: 150px;
   line-height: 1;
   color: var(--white);
@@ -564,7 +565,7 @@ html.js .reveal.is-in {
 
 .project-card__title {
   font-family: var(--font-dot);
-  font-weight: 900;
+  font-weight: 800;
   font-size: clamp(22px, 2.4vw, 31px);
   text-transform: uppercase;
   line-height: 1.06;
@@ -872,7 +873,7 @@ html.js .modal:not([hidden]) .modal__panel { animation: panel-in 0.65s var(--eas
 
 .markdown h1, .markdown h2, .markdown h3 {
   font-family: var(--font-dot);
-  font-weight: 900;
+  font-weight: 800;
   text-transform: uppercase;
   line-height: 1.12;
   margin: 30px 0 12px;
